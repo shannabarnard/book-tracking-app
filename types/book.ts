@@ -14,3 +14,18 @@ export interface Book {
 }
 
 export type SortOrder = 'asc' | 'desc'
+
+export interface CreateBookRequest {
+  title: string
+  author: string
+  isbn: string
+  rating?: Rating
+  comments?: string
+  noteStatus: NoteStatus
+  coverImageUrls?: string[]
+}
+
+export interface UpdateBookRequest {
+  rating: Rating
+  comments: string
+}
