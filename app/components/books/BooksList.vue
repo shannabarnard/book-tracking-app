@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import type { Book } from '@/types/book'
 import BookListItem from './BookListItem.vue'
 
-const books = [] // temporary static placeholder
+defineProps<{
+  books: ReadonlyArray<Book>
+}>()
+
+const emit = defineEmits<{
+  (event: 'view' | 'edit' | 'delete', id: string): void
+}>()
 </script>
 
 <template>
@@ -17,6 +24,9 @@ const books = [] // temporary static placeholder
       v-for="book in books"
       :key="book.id"
       :book="book"
+      @view="(id) => emit('view', id)"
+      @edit="(id) => emit('edit', id)"
+      @delete="(id) => emit('delete', id)"
     />
   </div>
 </template>
