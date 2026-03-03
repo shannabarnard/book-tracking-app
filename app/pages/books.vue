@@ -63,10 +63,17 @@ const filteredSorted = computed<Book[]>(() => {
 })
 
 const total = computed(() => filteredSorted.value.length)
+
+function onAdd() {
+  // placeholder for modal open in a later commit
+  console.info('Add Book clicked')
+}
 </script>
 
 <template>
   <div class="space-y-6">
+    <BooksHeader @add="onAdd" />
+
     <BooksToolbar
       :search="search"
       :sort-order="sortOrder"
