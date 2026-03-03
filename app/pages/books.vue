@@ -6,6 +6,8 @@ import BooksList from '~/components/books/BooksList.vue'
 
 const search = ref<string>('')
 const sortOrder = ref<SortOrder>('asc')
+const page = ref<number>(1)
+const pageSize = 10
 
 // Typed mock data (UI scaffold only; replace with API later)
 const allBooks = ref<Book[]>([
@@ -64,6 +66,12 @@ const filteredSorted = computed<Book[]>(() => {
 
 const total = computed(() => filteredSorted.value.length)
 
+const pagedBooks = computed<Book[]>(() => {
+  const start = (page.value - 1) * pageSize
+  const end = start + pageSize
+  return filteredSorted.value.slice(start, end)
+})
+
 function onAdd() {
   // placeholder for modal open in a later commit
   console.info('Add Book clicked')
@@ -81,7 +89,12 @@ function onAdd() {
       @update:sort-order="sortOrder = $event"
     />
 
-    {{ total }}
+    <div class="flex items-center text-sm text-slate-600">
+      <span class="font-medium mr-1">{{ pagedBooks.length }}</span>
+      of
+      <span class="font-medium mx-1">{{ total }}</span>
+      books
+    </div>
 
     <BooksList
       :books="allBooks"
