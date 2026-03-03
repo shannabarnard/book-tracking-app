@@ -1,3 +1,4 @@
+// frontend/utils/validation.ts
 import type { CreateBookRequest, Rating, UpdateBookRequest } from '~/types/book'
 
 export interface FieldErrors {
@@ -6,53 +7,94 @@ export interface FieldErrors {
   isbn?: string
   rating?: string
   comments?: string
+  noteStatus?: string
   coverImageUrls?: string
 }
 
-export function validateRating(rating?: number): rating is Rating {
+export const LIMITS = {
+  titleMax: 200,
+  authorMax: 120,
+  isbnMin: 10,
+  isbnMax: 17,
+  commentsMax: 1000,
+  coverUrlMax: 2048,
+  coverUrlsMaxCount: 5
+} as const
+
+export function isValidRating(rating: number): rating is Rating {
   return rating === 1 || rating === 2 || rating === 3 || rating === 4 || rating === 5
+}
+
+function containsDisallowedWord(value: string, word: string): boolean {
+  return value.toLowerCase().includes(word.toLowerCase())
 }
 
 export function validateCreateBook(input: CreateBookRequest): FieldErrors {
   const e: FieldErrors = {}
 
-  if (!input.title.trim()) e.title = 'Title is required.'
-  else if (input.title.length > 200) e.title = 'Max 200 characters.'
-
-  if (!input.author.trim()) e.author = 'Author is required.'
-  else if (input.author.length > 120) e.author = 'Max 120 characters.'
-
-  if (!input.isbn.trim()) e.isbn = 'ISBN is required.'
-  else if (input.isbn.length < 10 || input.isbn.length > 17) e.isbn = 'ISBN must be 10–17 characters.'
-
-  if (input.rating !== undefined && !validateRating(input.rating)) e.rating = 'Rating must be 1–5.'
-
+  const title = input.title.trim()
+  const author = input.author.trim()
+  const isbn = input.isbn.trim()
   const comments = (input.comments ?? '').trim()
+  const rating = input.rating
 
-  // requirement: comments required if rating supplied
-  if (input.rating !== undefined && comments.length === 0) e.comments = 'Comments are required when rating is supplied.'
-  if (comments.length > 1000) e.comments = 'Max 1000 characters.'
-  if (comments.toLowerCase().includes('horrible')) e.comments = 'Comments may not contain the word \'horrible\'.'
+  // Title
+  if (title.length === 0) e.title = 'Please enter a title.'
+  else if (title.length > LIMITS.titleMax) e.title = `Title must be ${LIMITS.titleMax} characters or fewer.`
 
+  // Author
+  if (author.length === 0) e.author = 'Please enter an author.'
+  else if (author.length > LIMITS.authorMax) e.author = `Author must be ${LIMITS.authorMax} characters or fewer.`
+
+  // ISBN
+  if (isbn.length === 0) e.isbn = 'Please enter an ISBN.'
+  else if (isbn.length < LIMITS.isbnMin || isbn.length > LIMITS.isbnMax) {
+    e.isbn = `ISBN must be between ${LIMITS.isbnMin} and ${LIMITS.isbnMax} characters.`
+  }
+
+  // Rating (optional in Add)
+  if (rating !== undefined) {
+    if (!isValidRating(rating)) e.rating = 'Rating must be between 1 and 5.'
+
+    // Comments required if rating supplied
+    if (comments.length === 0) {
+      e.comments = 'Please add a comment when providing a rating.'
+    }
+  }
+
+  // Comments rules (whenever comments exist)
+  if (comments.length > LIMITS.commentsMax) {
+    e.comments = `Comments must be ${LIMITS.commentsMax} characters or fewer.`
+  } else if (comments.length > 0 && containsDisallowedWord(comments, 'horrible')) {
+    e.comments = `Please remove the word "horrible" from your comment.`
+  }
+
+  // Cover URLs (optional)
   const urls = input.coverImageUrls ?? []
-  if (urls.length > 5) e.coverImageUrls = 'Max 5 cover image URLs.'
-  if (urls.some(u => u.trim().length === 0 || u.length > 2048)) e.coverImageUrls = 'Each URL must be non-empty and <= 2048 chars.'
+  if (urls.length > LIMITS.coverUrlsMaxCount) {
+    e.coverImageUrls = `You can add up to ${LIMITS.coverUrlsMaxCount} cover image URLs.`
+  } else if (urls.some(u => u.trim().length === 0 || u.length > LIMITS.coverUrlMax)) {
+    e.coverImageUrls = `Each cover URL must be non-empty and ${LIMITS.coverUrlMax} characters or fewer.`
+  }
 
   return e
 }
 
 export function validateUpdateBook(input: UpdateBookRequest): FieldErrors {
   const e: FieldErrors = {}
-  if (!validateRating(input.rating)) e.rating = 'Rating must be 1–5.'
 
+  // Edit: rating required
+  if (!isValidRating(input.rating)) e.rating = 'Rating must be between 1 and 5.'
+
+  // Edit: comments required (because rating always present)
   const comments = input.comments.trim()
-  if (comments.length === 0) e.comments = 'Comments are required.'
-  if (comments.length > 1000) e.comments = 'Max 1000 characters.'
-  if (comments.toLowerCase().includes('horrible')) e.comments = 'Comments may not contain the word \'horrible\'.'
+  if (comments.length === 0) e.comments = 'Please add a comment.'
+  else if (comments.length > LIMITS.commentsMax) e.comments = `Comments must be ${LIMITS.commentsMax} characters or fewer.`
+  else if (containsDisallowedWord(comments, 'horrible')) e.comments = `Please remove the word "horrible" from your comment.`
 
   return e
 }
 
 export function hasErrors(errors: FieldErrors): boolean {
-  return Object.values(errors).some(Boolean)
+  return Object.values(errors).some(v => typeof v === 'string' && v.length > 0)
 }

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import ModalShell from '~/components/shared/ModalDialog.vue'
 import type { CreateBookRequest, NoteStatus } from '~/types/book'
-import { hasErrors, validateCreateBook } from '~/utils/validation'
+import { hasErrors, validateCreateBook, LIMITS } from '~/utils/validation'
 
-const props = defineProps<{ open: boolean }>()
+defineProps<{ open: boolean }>()
+
 const emit = defineEmits<{
   (event: 'close'): void
   (event: 'save', payload: CreateBookRequest): void
@@ -23,10 +24,18 @@ const errors = reactive<Record<string, string | undefined>>({})
 
 const noteStatusOptions: NoteStatus[] = ['ToRead', 'Reading', 'Read', 'Abandoned']
 
-function submit() {
+function validateAndSetErrors() {
   const e = validateCreateBook(form)
   Object.assign(errors, e)
+  return e
+}
 
+function clearFieldError(field: keyof typeof errors) {
+  errors[field] = undefined
+}
+
+function submit() {
+  const e = validateAndSetErrors()
   if (!hasErrors(e)) {
     emit('save', {
       ...form,
@@ -37,22 +46,6 @@ function submit() {
     })
   }
 }
-
-watch(
-  () => props.open,
-  (isOpen) => {
-    if (!isOpen) return
-    // reset when opened (optional)
-    form.title = ''
-    form.author = ''
-    form.isbn = ''
-    form.rating = undefined
-    form.comments = ''
-    form.noteStatus = 'ToRead'
-    form.coverImageUrls = []
-    Object.keys(errors).forEach(k => (errors[k] = undefined))
-  }
-)
 </script>
 
 <template>
@@ -69,7 +62,9 @@ watch(
         <label class="block text-sm font-medium text-slate-700">Title</label>
         <input
           v-model="form.title"
+          :maxlength="LIMITS.titleMax"
           class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          @input="clearFieldError('title')"
         >
         <p
           v-if="errors.title"
@@ -83,7 +78,9 @@ watch(
         <label class="block text-sm font-medium text-slate-700">Author</label>
         <input
           v-model="form.author"
+          :maxlength="LIMITS.authorMax"
           class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          @input="clearFieldError('author')"
         >
         <p
           v-if="errors.author"
@@ -97,7 +94,9 @@ watch(
         <label class="block text-sm font-medium text-slate-700">ISBN</label>
         <input
           v-model="form.isbn"
+          :maxlength="LIMITS.isbnMax"
           class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          @input="clearFieldError('isbn')"
         >
         <p
           v-if="errors.isbn"
@@ -132,6 +131,7 @@ watch(
             min="1"
             max="5"
             class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+            @input="clearFieldError('rating')"
           >
           <p
             v-if="errors.rating"
@@ -146,14 +146,19 @@ watch(
         <label class="block text-sm font-medium text-slate-700">Comments</label>
         <textarea
           v-model="form.comments"
+          :maxlength="LIMITS.commentsMax"
           rows="4"
           class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          @input="clearFieldError('comments')"
         />
         <p
           v-if="errors.comments"
           class="mt-1 text-sm text-red-600"
         >
           {{ errors.comments }}
+        </p>
+        <p class="mt-1 text-xs text-slate-500">
+          {{ (form.comments ?? '').length }} / {{ LIMITS.commentsMax }}
         </p>
       </div>
     </form>
@@ -162,7 +167,7 @@ watch(
       <div class="flex justify-end gap-2">
         <button
           type="button"
-          class="px-4 py-2 rounded-lg border bg-white text-slate-500 hover:bg-slate-150"
+          class="px-4 py-2 rounded-lg border bg-white hover:bg-slate-50"
           @click="emit('close')"
         >
           Cancel
