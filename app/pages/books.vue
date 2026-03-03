@@ -1,7 +1,11 @@
 <!-- pages/books.vue -->
 <script setup lang="ts">
 import type { Book } from '~/types/book'
+import BooksToolbar from '~/components/books/BooksToolbar.vue'
 import BooksList from '~/components/books/BooksList.vue'
+
+const search = ref<string>('')
+const sortOrder = ref<SortOrder>('asc')
 
 // Typed mock data (UI scaffold only; replace with API later)
 const allBooks = ref<Book[]>([
@@ -34,10 +38,44 @@ const allBooks = ref<Book[]>([
     coverImageUrls: []
   }
 ])
+
+const filteredSorted = computed<Book[]>(() => {
+  const term = search.value.trim().toLowerCase()
+
+  let items = allBooks.value
+
+  if (term.length > 0) {
+    items = items.filter((b) => {
+      return (
+        b.title.toLowerCase().includes(term)
+        || b.author.toLowerCase().includes(term)
+      )
+    })
+  }
+
+  items = [...items].sort((a, b) =>
+    a.title.localeCompare(b.title, undefined, { sensitivity: 'base' })
+  )
+
+  if (sortOrder.value === 'desc') items.reverse()
+
+  return items
+})
+
+const total = computed(() => filteredSorted.value.length)
 </script>
 
 <template>
   <div class="space-y-6">
+    <BooksToolbar
+      :search="search"
+      :sort-order="sortOrder"
+      @update:search="search = $event"
+      @update:sort-order="sortOrder = $event"
+    />
+
+    {{ total }}
+
     <BooksList
       :books="allBooks"
     />
