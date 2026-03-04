@@ -17,7 +17,6 @@ export interface UseBooksApi {
 }
 
 function toApiProblem(err: unknown): ApiProblem {
-  // Nuxt $fetch throws a "FetchError" with `data` and `statusCode` fields.
   if (typeof err === 'object' && err !== null) {
     const maybe = err as {
       statusCode?: number
