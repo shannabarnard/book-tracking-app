@@ -1,60 +1,104 @@
-# Nuxt Starter Template
+# Walkers – Book Tracking Application
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+A Vue 3 + Nuxt application that recreates the **“My Books” UI** from the Walkers Full-Stack Developer technical assessment.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+Repository:  
+https://github.com/shannabarnard/book-tracking-app
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+The goal of this project is to demonstrate:
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
+- Clean **component architecture**
+- **Reusable Vue components**
+- Modern **Nuxt 4 + TypeScript** frontend development
+- Responsive UI using **TailwindCSS**
+- Integration with a mock API
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
+The application allows users to manage a collection of books including adding, editing ratings/comments, searching, sorting, and viewing details.
 
-## Quick Start
+---
 
-```bash [Terminal]
-npm create nuxt@latest -- -t github:nuxt-ui-templates/starter
-```
+# Tech Stack
 
-## Deploy your own
+## Frontend
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
+- **Vue 3**
+- **Nuxt 4**
+- **TypeScript**
+- **TailwindCSS 4**
+- **Nuxt UI**
+- **Iconify icons**
 
-## Setup
+## Development Tools
 
-Make sure to install the dependencies:
+- **ESLint**
+- **Prettier**
+- **Vue TSC (type checking)**
+- **PNPM**
 
-```bash
-pnpm install
-```
+## Testing
 
-## Development Server
+- **Vitest + Vue Test Utils**
 
-Start the development server on `http://localhost:3000`:
+---
 
-```bash
-pnpm dev
-```
+# Features
 
-## Production
+- My Books dashboard
+- Sidebar navigation
+- Add Book modal
+- Edit Book modal (rating and comments only)
+- Delete confirmation modal
+- Search books by **title or author**
+- Sort books by **title**
+- Notes indicator when comments exist
+- Responsive UI layout
+- Mock API integration
 
-Build the application for production:
+Additional pages:
 
-```bash
-pnpm build
-```
+- **Analytics** – sample book statistics
+- **Settings** – example preferences page
 
-Locally preview production build:
+---
 
-```bash
-pnpm preview
-```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+### Key Architectural Choices
+
+**Composable API Layer**
+
+`useBooksQuery` handles:
+
+- fetching books
+- adding books
+- editing books
+- deleting books
+
+This keeps API logic separate from UI components.
+
+**Reusable Components**
+
+Examples include:
+
+- `BookCard`
+- `BookToolbar`
+- `AddBookModal`
+- `EditBookModal`
+- `DeleteBookModal`
+
+**Mock Backend**
+
+Nuxt server routes simulate the REST API required for the assessment.
+
+---
+
+# Installation
+
+## 1. Clone the repository
+
+
+git clone https://github.com/shannabarnard/book-tracking-app.git
+
+npm install
+
+npm run dev
+
