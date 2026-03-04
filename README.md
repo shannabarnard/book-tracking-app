@@ -1,6 +1,6 @@
 # Book Tracking Application
 
-A Vue 3 + Nuxt application that recreates the **“My Books” UI** from the Walkers Full-Stack Developer technical assessment.
+A Vue 3 + Nuxt application that recreates a **“My Books” UI**.
 
 Repository:  
 https://github.com/shannabarnard/book-tracking-app
@@ -19,7 +19,7 @@ The application allows users to manage a collection of books including adding, e
 
 
 # Tech Stack
-
+A Vue 3 + Nuxt application that recreates the “My Books” app.
 ## Frontend
 
 - **Vue 3**
