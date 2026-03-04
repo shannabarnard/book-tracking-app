@@ -25,6 +25,24 @@ const allBooks = ref<Book[]>([
     comments: 'Great practical guidance.',
     noteStatus: 'Read',
     coverImageUrls: []
+  },
+  {
+    id: 'b2',
+    title: 'The Pragmatic Programmer',
+    author: 'Andrew Hunt, David Thomas',
+    isbn: '9780201616224',
+    rating: 4,
+    comments: '',
+    noteStatus: 'Reading',
+    coverImageUrls: []
+  },
+  {
+    id: 'b3',
+    title: 'Domain-Driven Design',
+    author: 'Eric Evans',
+    isbn: '9780321125217',
+    noteStatus: 'ToRead',
+    coverImageUrls: []
   }
 ])
 
