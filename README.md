@@ -1,4 +1,4 @@
-# Walkers – Book Tracking Application
+# Book Tracking Application
 
 A Vue 3 + Nuxt application that recreates the **“My Books” UI** from the Walkers Full-Stack Developer technical assessment.
 
@@ -16,6 +16,7 @@ The goal of this project is to demonstrate:
 The application allows users to manage a collection of books including adding, editing ratings/comments, searching, sorting, and viewing details.
 
 ---
+
 
 # Tech Stack
 
@@ -93,12 +94,14 @@ Nuxt server routes simulate the REST API required for the assessment.
 
 # Installation
 
-## 1. Clone the repository
+#### Clone the repository
 
 
-git clone https://github.com/shannabarnard/book-tracking-app.git
+`git clone https://github.com/shannabarnard/book-tracking-app.git`
 
-npm install
+#### Install
+`npm install`
 
-npm run dev
+#### Run
+`npm run dev`
 
