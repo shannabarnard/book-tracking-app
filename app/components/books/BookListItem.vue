@@ -9,12 +9,11 @@ const emit = defineEmits<{
   (event: 'view' | 'edit' | 'delete', id: string): void
 }>()
 
-const coverUrl = computed(() => props.book.coverImageUrls[0] ?? null)
+const coverUrl = computed(() => props.book.coverImageUrls?.[0] ?? null)
 
 const stars = computed(() => {
   const rating = props.book.rating
   if (!rating) return ''
-  // e.g. 4 => "★★★★☆"
   const filled = '★'.repeat(rating)
   const empty = '☆'.repeat(5 - rating)
   return `${filled}${empty}`

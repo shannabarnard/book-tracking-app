@@ -7,10 +7,10 @@ export interface Book {
   title: string
   author: string
   isbn: string
-  rating?: Rating // optional (supports "rating supplied" validation later)
-  comments?: string // optional (supports notes indicator)
+  rating?: Rating
+  comments?: string
   noteStatus: NoteStatus
-  coverImageUrls: string[]
+  coverImageUrls?: string[]
 }
 
 export type SortOrder = 'asc' | 'desc'

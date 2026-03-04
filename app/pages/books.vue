@@ -4,47 +4,22 @@ import BooksHeader from '~/components/books/BooksHeader.vue'
 import BooksToolbar from '~/components/books/BooksToolbar.vue'
 import BooksList from '~/components/books/BooksList.vue'
 import AddBookModal from '~/components/books/AddBookModal.vue'
+import { useBooksQuery } from '~/composables/useBooksQuery'
 
-// UI state
 const search = ref<string>('')
 const sortOrder = ref<SortOrder>('asc')
 const page = ref<number>(1)
 const pageSize = 10
 
-// Modal state
 const addOpen = ref<boolean>(false)
 
-// Local in-memory list (until MSW/API)
-const allBooks = ref<Book[]>([
-  {
-    id: 'b1',
-    title: 'Clean Code',
-    author: 'Robert C. Martin',
-    isbn: '9780132350884',
-    rating: 5,
-    comments: 'Great practical guidance.',
-    noteStatus: 'Read',
-    coverImageUrls: []
-  },
-  {
-    id: 'b2',
-    title: 'The Pragmatic Programmer',
-    author: 'Andrew Hunt, David Thomas',
-    isbn: '9780201616224',
-    rating: 4,
-    comments: '',
-    noteStatus: 'Reading',
-    coverImageUrls: []
-  },
-  {
-    id: 'b3',
-    title: 'Domain-Driven Design',
-    author: 'Eric Evans',
-    isbn: '9780321125217',
-    noteStatus: 'ToRead',
-    coverImageUrls: []
-  }
-])
+const booksQuery = useBooksQuery({ initialPageSize: 10 })
+
+const localBooks = ref<Book[]>([])
+
+const mergedBooks = computed<Book[]>(() => {
+  return [...localBooks.value, ...booksQuery.items.value]
+})
 
 function openAdd(): void {
   addOpen.value = true
@@ -55,7 +30,6 @@ function closeAdd(): void {
 }
 
 function onAddSave(payload: CreateBookRequest): void {
-  // Create a Book from the CreateBookRequest
   const newBook: Book = {
     id: crypto.randomUUID(),
     title: payload.title.trim(),
@@ -67,18 +41,14 @@ function onAddSave(payload: CreateBookRequest): void {
     coverImageUrls: payload.coverImageUrls ?? []
   }
 
-  // Enforce max 25 (frontend-level mirror; backend will enforce too)
-  if (allBooks.value.length >= 25) {
-    // For now, just close modal + console. Next step: show a toast/banner.
+  if (mergedBooks.value.length >= 25) {
     console.warn('Maximum of 25 books reached.')
     addOpen.value = false
     return
   }
 
-  allBooks.value = [newBook, ...allBooks.value]
+  localBooks.value = [newBook, ...localBooks.value]
   addOpen.value = false
-
-  // UX: go to first page so user sees the new item
   page.value = 1
 }
 
@@ -86,7 +56,7 @@ function onAddSave(payload: CreateBookRequest): void {
 const filteredSorted = computed<Book[]>(() => {
   const term = search.value.trim().toLowerCase()
 
-  let items = allBooks.value
+  let items = mergedBooks.value
 
   if (term.length > 0) {
     items = items.filter((b) => {
