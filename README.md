@@ -16,6 +16,8 @@ The goal of this project is to demonstrate:
 The application allows users to manage a collection of books including adding, editing ratings/comments, searching, sorting, and viewing details.
 
 ---
+# Demo App
+[Book Tracking Application](https://book-tracking-app-w.netlify.app/books/)
 
 
 # Tech Stack
@@ -84,7 +86,7 @@ Examples include:
 - `BookToolbar`
 - `AddBookModal`
 - `EditBookModal`
-- `DeleteBookModal`
+- `DeleteBookModal`(WIP)
 
 **Mock Backend**
 
