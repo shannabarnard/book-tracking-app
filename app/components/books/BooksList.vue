@@ -12,7 +12,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="bg-white rounded-xl shadow-sm border divide-y">
+  <div class="bg-white rounded-xl shadow-sm border-slate-200 divide-y divide-slate-200">
     <div
       v-if="books.length === 0"
       class="p-8 text-center text-slate-500"
