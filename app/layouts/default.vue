@@ -7,7 +7,7 @@ import AppSidebar from '~/layouts/AppSidebar.vue'
     <AppSidebar />
 
     <main class="flex-1 min-w-0">
-      <header class="h-16 flex items-center justify-between px-6 border-b bg-white">
+      <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6">
         <div class="text-sm text-slate-600">
           BookHub
         </div>

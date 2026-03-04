@@ -5,21 +5,24 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="bg-white rounded-xl shadow-sm border p-6 flex justify-between items-start">
+  <div class="flex items-start justify-between">
     <div>
-      <h1 class="text-2xl font-semibold text-slate-900">
+      <h1 class="text-[34px] font-extrabold text-slate-900 leading-[1.05]">
         My Books
       </h1>
-      <p class="text-slate-600 mt-1">
-        Manage your books, track ratings, and add personal notes.
+      <p class="mt-2 text-sm text-slate-500">
+        Manage your book collection and discover new reads.
       </p>
     </div>
 
     <button
-      class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+      type="button"
+      class="h-10 px-4 rounded-lg bg-[#6e63ff] text-white text-sm font-semibold shadow-sm hover:bg-[#5d53ff] transition
+             inline-flex items-center gap-2"
       @click="emit('add')"
     >
-      + Add Book
+      <span class="text-lg leading-none">+</span>
+      Add Book
     </button>
   </div>
 </template>
