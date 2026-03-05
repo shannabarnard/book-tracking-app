@@ -1,24 +1,38 @@
-<script setup lang="ts">
-const props = defineProps<{
-  open: boolean
-  title: string
-  closeOnBackdrop?: boolean
-}>()
+<script setup lang='ts'>
+import { onBeforeUnmount, onMounted } from 'vue'
+
+const props = withDefaults(
+  defineProps<{
+    open: boolean
+    title: string
+    closeOnBackdrop?: boolean
+  }>(),
+  {
+    closeOnBackdrop: true
+  }
+)
 
 const emit = defineEmits<{
   (event: 'close'): void
 }>()
 
-function onKeydown(e: KeyboardEvent) {
+const close = () => emit('close')
+
+const onKeydown = (event: KeyboardEvent) => {
   if (!props.open) return
-  if (e.key === 'Escape') emit('close')
+  if (event.key === 'Escape') close()
 }
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+})
 
-function onBackdropClick() {
-  if (props.closeOnBackdrop ?? true) emit('close')
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
+
+const onBackdropClick = () => {
+  if (props.closeOnBackdrop) close()
 }
 </script>
 
@@ -27,33 +41,41 @@ function onBackdropClick() {
     <div
       v-if="open"
       class="fixed inset-0 z-50"
+      role="dialog"
+      aria-modal="true"
     >
       <div
         class="absolute inset-0 bg-black/40"
         @click="onBackdropClick"
       />
 
-      <div class="relative h-full w-full flex items-center justify-center p-4">
-        <div class="w-full max-w-lg rounded-xl bg-white shadow-lg border overflow-hidden">
-          <div class="px-5 py-4 border-b flex items-center justify-between">
+      <div class="relative flex h-full w-full items-center justify-center p-4">
+        <div class="flex w-full max-w-lg max-h-[90vh] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+          <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4 flex-shrink-0">
             <h2 class="text-lg font-semibold text-slate-900">
               {{ title }}
             </h2>
+
             <button
-              class="text-slate-500 hover:text-slate-700"
-              @click="emit('close')"
+              type="button"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+              aria-label="Close modal"
+              @click="close"
             >
-              ✕
+              <UIcon
+                name="i-lucide-x"
+                class="size-4"
+              />
             </button>
           </div>
 
-          <div class="p-5">
+          <div class="p-5 overflow-y-auto">
             <slot />
           </div>
 
           <div
             v-if="$slots.footer"
-            class="px-5 py-4 border-t bg-slate-50"
+            class="border-t border-slate-200 bg-slate-50 px-5 py-4 flex-shrink-0"
           >
             <slot name="footer" />
           </div>

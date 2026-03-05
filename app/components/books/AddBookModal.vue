@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { reactive } from 'vue'
 import ModalShell from '~/components/shared/ModalDialog.vue'
 import type { CreateBookRequest, NoteStatus } from '~/types/book'
 import { hasErrors, validateCreateBook, LIMITS } from '~/utils/validation'
 
-defineProps<{ open: boolean }>()
+const props = defineProps<{ open: boolean }>()
 
 const emit = defineEmits<{
   (event: 'close'): void
@@ -24,35 +25,38 @@ const errors = reactive<Record<string, string | undefined>>({})
 
 const noteStatusOptions: NoteStatus[] = ['ToRead', 'Reading', 'Read', 'Abandoned']
 
-function validateAndSetErrors() {
-  const e = validateCreateBook(form)
-  Object.assign(errors, e)
-  return e
-}
+const close = () => emit('close')
 
-function clearFieldError(field: keyof typeof errors) {
+const clearFieldError = (field: keyof typeof errors) => {
   errors[field] = undefined
 }
 
-function submit() {
-  const e = validateAndSetErrors()
-  if (!hasErrors(e)) {
-    emit('save', {
-      ...form,
-      title: form.title.trim(),
-      author: form.author.trim(),
-      isbn: form.isbn.trim(),
-      comments: (form.comments ?? '').trim()
-    })
-  }
+const validateForm = () => {
+  const next = validateCreateBook(form)
+  Object.assign(errors, next)
+  return next
+}
+
+const buildPayload = (): CreateBookRequest => ({
+  ...form,
+  title: form.title.trim(),
+  author: form.author.trim(),
+  isbn: form.isbn.trim(),
+  comments: (form.comments ?? '').trim()
+})
+
+const submit = () => {
+  const next = validateForm()
+  if (hasErrors(next)) return
+  emit('save', buildPayload())
 }
 </script>
 
 <template>
   <ModalShell
-    :open="open"
+    :open="props.open"
     title="Add Book"
-    @close="emit('close')"
+    @close="close"
   >
     <form
       class="space-y-4"
@@ -63,7 +67,7 @@ function submit() {
         <input
           v-model="form.title"
           :maxlength="LIMITS.titleMax"
-          class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           @input="clearFieldError('title')"
         >
         <p
@@ -79,7 +83,7 @@ function submit() {
         <input
           v-model="form.author"
           :maxlength="LIMITS.authorMax"
-          class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           @input="clearFieldError('author')"
         >
         <p
@@ -95,7 +99,7 @@ function submit() {
         <input
           v-model="form.isbn"
           :maxlength="LIMITS.isbnMax"
-          class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           @input="clearFieldError('isbn')"
         >
         <p
@@ -106,12 +110,12 @@ function submit() {
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <label class="block text-sm font-medium text-slate-700">Note status</label>
           <select
             v-model="form.noteStatus"
-            class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+            class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option
               v-for="s in noteStatusOptions"
@@ -130,7 +134,7 @@ function submit() {
             type="number"
             min="1"
             max="5"
-            class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+            class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             @input="clearFieldError('rating')"
           >
           <p
@@ -148,7 +152,7 @@ function submit() {
           v-model="form.comments"
           :maxlength="LIMITS.commentsMax"
           rows="4"
-          class="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
+          class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           @input="clearFieldError('comments')"
         />
         <p
@@ -167,14 +171,16 @@ function submit() {
       <div class="flex justify-end gap-2">
         <button
           type="button"
-          class="px-4 py-2 rounded-lg border bg-white hover:bg-slate-50"
-          @click="emit('close')"
+          class="rounded-lg border border-slate-200 bg-white px-4 py-2 hover:bg-slate-50"
+          @click="close"
         >
           Cancel
         </button>
+
         <button
-          type="submit"
-          class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+          type="button"
+          class="rounded-lg border border-slate-200 bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          @click="submit"
         >
           Save
         </button>
