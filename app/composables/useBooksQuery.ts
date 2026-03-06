@@ -38,7 +38,7 @@ function clampInt(value: number, min: number, max: number): number {
 }
 
 export function useBooksQuery(options?: UseBooksQueryOptions): UseBooksQueryResult {
-  const pageSize = ref<number>(options?.initialPageSize ?? 10)
+  const pageSize = ref<number>(options?.initialPageSize ?? 5)
 
   const { data, pending, error, refresh } = useFetch<BooksResponse>('/api/books', {
     query: computed(() => ({ pageSize: pageSize.value })),

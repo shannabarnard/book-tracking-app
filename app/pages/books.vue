@@ -88,14 +88,6 @@ watch([search, sortOrder, totalPages], () => {
   if (page.value < 1) page.value = 1
 })
 
-function prevPage(): void {
-  page.value = Math.max(1, page.value - 1)
-}
-function nextPage(): void {
-  page.value = Math.min(totalPages.value, page.value + 1)
-}
-
-// placeholders for later commits
 function onView(id: string): void { console.info('View', id) }
 function onEdit(id: string): void { console.info('Edit', id) }
 function onDelete(id: string): void { console.info('Delete', id) }
@@ -119,39 +111,6 @@ function onDelete(id: string): void { console.info('Delete', id) }
       @delete="onDelete"
     />
 
-    <div class="flex items-center justify-between text-sm text-slate-600">
-      <div>
-        Showing <span class="font-medium">{{ pagedBooks.length }}</span> of
-        <span class="font-medium">{{ total }}</span>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded border bg-white hover:bg-slate-50 disabled:opacity-50"
-          :disabled="page === 1"
-          @click="prevPage"
-        >
-          Prev
-        </button>
-
-        <div class="px-2">
-          Page <span class="font-medium">{{ page }}</span> of
-          <span class="font-medium">{{ totalPages }}</span>
-        </div>
-
-        <button
-          type="button"
-          class="px-3 py-1.5 rounded border bg-white hover:bg-slate-50 disabled:opacity-50"
-          :disabled="page === totalPages"
-          @click="nextPage"
-        >
-          Next
-        </button>
-      </div>
-    </div>
-
-    <!-- Add Modal -->
     <AddBookModal
       :open="addOpen"
       @close="closeAdd"
