@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-64 bg-blue-700 text-white min-h-screen p-4">
+  <aside class="w-64 bg-blue-700 text-white h-full p-4">
     <div class="text-xl font-bold mb-8">
       BookHub
     </div>
